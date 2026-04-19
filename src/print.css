@@ -1,0 +1,163 @@
+/* ---------- Print Model Card ---------- */
+.printOnly {
+  display: none;
+}
+
+.printCard {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  color: #111;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial;
+}
+
+.printHeader {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 20px;
+  align-items: start;
+}
+
+.printName {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.printTitle {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #444;
+}
+
+.printMeta {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #555;
+}
+
+.printPhotoWrap {
+  width: 220px;
+  height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.printPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.printIntro {
+  margin: 18px 0 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #333;
+}
+
+.printGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.printBlock {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.printBlockTitle {
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.printList {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: #222;
+}
+
+.printBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.printBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #e9e9e9;
+  background: #fafafa;
+  font-size: 12px;
+  font-weight: 700;
+  color: #222;
+}
+
+.printBadgeIcon {
+  font-size: 12px;
+}
+
+.printStatsLine {
+  font-size: 13px;
+  color: #222;
+}
+
+.printFooter {
+  margin-top: 14px;
+  font-size: 11px;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* PRINT RULES: show only the model card */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  body {
+    background: white !important;
+  }
+  .page,
+  .shell,
+  .hero,
+  .gridWrap,
+  .topnav,
+  .actionsRow {
+    display: none !important;
+  }
+
+  .printOnly {
+    display: block !important;
+  }
+  .printCard {
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+}
