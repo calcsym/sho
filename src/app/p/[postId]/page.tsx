@@ -4,10 +4,12 @@ import PostDetail from "@/components/PostDetail";
 export default async function PostPage({
   params,
 }: {
-  params: { postId: string };
+  params: Promise<{ postId: string }>;
 }) {
+  const { postId } = await params;
+
   const post = await prisma.post.findUnique({
-    where: { id: params.postId },
+    where: { id: postId },
     include: {
       media: true,
       tags: { include: { tag: true } },
@@ -16,7 +18,7 @@ export default async function PostPage({
     },
   });
 
-  if (!post) return null;
+  if (!post) return <div>Post not found</div>;
 
   return (
     <PostDetail
@@ -34,18 +36,16 @@ export default async function PostPage({
         tags: post.tags.map((pt: { tag: { name: string } }) => pt.tag.name),
         likeCount: post._count.likes,
         commentCount: post._count.comments,
-        comments: post.comments.map(
-          (c: NonNullable<typeof post.comments>[number]) => ({
-            id: c.id,
-            body: c.body,
-            createdAt: c.createdAt.toISOString(),
-            author: {
-              id: c.profile.id,
-              name: c.profile.name ?? "",
-              image: c.profile.logoUrl ?? null,
-            },
-          }),
-        ),
+        comments: post.comments.map((c: NonNullable<typeof post.comments>[number]) => ({
+          id: c.id,
+          body: c.body,
+          createdAt: c.createdAt.toISOString(),
+          author: {
+            id: c.profile.id,
+            name: c.profile.name ?? "",
+            image: c.profile.logoUrl ?? null,
+          },
+        })),
       }}
       viewerProfileId=""
       initiallyLiked={false}
