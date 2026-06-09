@@ -1,9 +1,10 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { PrismaClient } from '@/generated/prisma';
+
+const prisma = new PrismaClient();
 
 type MediaInput = {
   url: string;
-  type: "PHOTO" | "VIDEO";
+  type: 'PHOTO' | 'VIDEO';
   thumbUrl?: string | null;
   width?: number | null;
   height?: number | null;
@@ -13,7 +14,7 @@ type MediaInput = {
   sortOrder?: number;
 };
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   const body = await req.json();
 
   // You’ll replace this with your real auth user/profile lookup
@@ -23,10 +24,8 @@ export async function POST(req: NextRequest) {
   const location = (body.location ?? null) as string | null;
   const media = (body.media ?? []) as MediaInput[];
 
-  if (!profileId)
-    return Response.json({ error: "Missing profileId" }, { status: 400 });
-  if (media.length === 0)
-    return Response.json({ error: "Missing media" }, { status: 400 });
+  if (!profileId) return Response.json({ error: 'Missing profileId' }, { status: 400 });
+  if (media.length === 0) return Response.json({ error: 'Missing media' }, { status: 400 });
 
   const post = await prisma.post.create({
     data: {

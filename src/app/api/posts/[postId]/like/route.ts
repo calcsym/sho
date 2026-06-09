@@ -1,57 +1,27 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from '@/lib/prisma';
 
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ postId: string }> },
-) {
-  const { postId } = await context.params;
+export async function POST(req: Request, ctx: { params: { postId: string } }) {
+  const { postId } = ctx.params;
+  const body = await req.json();
+  const profileId = body.profileId as string;
 
-  const body = await request.json().catch(() => ({}));
-  const profileId = body?.profileId ? String(body.profileId) : "";
+  if (!profileId) return Response.json({ error: 'Missing profileId' }, { status: 400 });
 
-  if (!profileId) {
-    return new Response(JSON.stringify({ error: "Missing profileId" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const existingCount = await prisma.like.count({
-    where: { postId, profileId },
+  const existing = await prisma.like.findUnique({
+    where: { profileId_postId: { profileId, postId } },
   });
 
-  if (existingCount === 0) {
+  if (existing) {
+    await prisma.like.delete({
+      where: { profileId_postId: { profileId, postId } },
+    });
+  } else {
     await prisma.like.create({
-      data: { postId, profileId },
+      data: { profileId, postId },
     });
   }
 
-  return new Response(JSON.stringify({ liked: true }), {
-    status: 200,
-    headers: { "content-type": "application/json" },
-  });
-}
+  const likeCount = await prisma.like.count({ where: { postId } });
 
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ postId: string }> },
-) {
-  const { postId } = await context.params;
-
-  const body = await request.json().catch(() => ({}));
-  const profileId = body?.profileId ? String(body.profileId) : "";
-
-  if (!profileId) {
-    return new Response(JSON.stringify({ error: "Missing profileId" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  await prisma.like.deleteMany({
-    where: { postId, profileId },
-  });
-
-  return new Response(null, { status: 204 });
+  return Response.json({ liked: !existing, likeCount });
 }

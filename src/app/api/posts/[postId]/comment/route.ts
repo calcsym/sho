@@ -1,39 +1,32 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma } from '@/lib/prisma';
 
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ postId: string }> },
-) {
-  const { postId } = await context.params;
+export async function POST(req: Request, ctx: { params: { postId: string } }) {
+  const { postId } = ctx.params;
+  const { profileId, body } = (await req.json()) as {
+    profileId: string;
+    body: string;
+  };
 
-  const body = await request.json().catch(() => ({}));
-  const text = String(body?.text ?? "").trim();
-  const profileId = body?.profileId ? String(body.profileId) : "";
+  if (!profileId) return Response.json({ error: 'Missing profileId' }, { status: 400 });
+  if (!body?.trim()) return Response.json({ error: 'Empty comment' }, { status: 400 });
 
-  if (!text) {
-    return new Response(JSON.stringify({ error: "Missing text" }), {
-      status: 400,
-      headers: { "content-type": "application/json" },
-    });
-  }
-  if (!profileId) {
-    return new Response(JSON.stringify({ error: "Missing profileId" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const comment = await prisma.comment.create({
-    data: {
-      postId,
-      profileId, // ✅ required
-      body: text,
+  const c = await prisma.comment.create({
+    data: { postId, profileId, body: body.trim() },
+    include: {
+      profile: { select: { id: true, name: true, image: true } },
     },
   });
 
-  return new Response(JSON.stringify({ comment }), {
-    status: 201,
-    headers: { "content-type": "application/json" },
+  return Response.json({
+    comment: {
+      id: c.id,
+      body: c.body,
+      createdAt: c.createdAt.toISOString(),
+      author: {
+        id: c.profile.id,
+        name: c.profile.name ?? 'NO_NAME',
+        image: c.profile.image ?? null,
+      },
+    },
   });
 }

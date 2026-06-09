@@ -5,18 +5,19 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 /**
  * generator client {
  * provider        = "prisma-client-js"
  * previewFeatures = ["driverAdapters"]
- * url      = env("DATABASE_URL")
  * }
  */
 datasource db {
-  provider = "postgresql" // or mysql/sqlite
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {

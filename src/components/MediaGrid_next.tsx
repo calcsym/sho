@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
-import MediaLightbox from "./MediaLightbox";
-import Link from "next/link";
+import { useMemo, useState } from 'react';
+import MediaLightbox from './MediaLightbox';
+import { Link } from 'react-router-dom';
 
 type MediaItem = {
   id: string;
-  type: "PHOTO" | "VIDEO";
+  type: 'PHOTO' | 'VIDEO';
   url: string;
   thumbUrl: string | null;
   width: number | null;
@@ -32,19 +32,14 @@ export default function MediaGrid({ items = [] }: { items?: MediaItem[] }) {
     <>
       <div className="ig-grid">
         {items.map((m) => (
-          <Link key={m.id} href={`/p/${m.postId}`} className="ig-tile">
+          <link key={m.id} href={`/p/${m.postId}`} className="ig-tile">
             <div className="ig-box">
-              {m.type === "PHOTO" ? (
-                <img
-                  src={m.url}
-                  alt={m.altText ?? ""}
-                  className="ig-media"
-                  loading="lazy"
-                />
+              {m.type === 'PHOTO' ? (
+                <img src={m.url} alt={m.altText ?? ''} className="ig-media" loading="lazy" />
               ) : (
                 <img
                   src={m.thumbUrl ?? m.url}
-                  alt={m.altText ?? ""}
+                  alt={m.altText ?? ''}
                   className="ig-media"
                   loading="lazy"
                 />
@@ -52,9 +47,9 @@ export default function MediaGrid({ items = [] }: { items?: MediaItem[] }) {
 
               <div className="ig-hover" />
 
-              {m.type === "VIDEO" && <div className="ig-videoBadge">▶</div>}
+              {m.type === 'VIDEO' && <div className="ig-videoBadge">▶</div>}
             </div>
-          </Link>
+          </link>
         ))}
       </div>
 
